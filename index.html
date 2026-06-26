@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoPro Service Center | Management System</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --primary: #0d6efd;
+      --primary-dark: #0b5ed7;
+      --light-bg: #f4f7fc;
+      --sidebar-bg: #0a2540;
+      --card-bg: #ffffff;
+      --text-dark: #1e293b;
+      --shadow-sm: 0 8px 20px rgba(0,0,0,0.05);
+      --shadow-hover: 0 12px 28px rgba(13, 110, 253, 0.12);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--light-bg);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    body.dark {
+      --light-bg: #1a1f2b;
+      --card-bg: #232a38;
+      --text-dark: #e9ecef;
+      --sidebar-bg: #0f172a;
+    }
+    
+    body.dark .card, 
+    body.dark .modal-content, 
+    body.dark .table {
+      background: var(--card-bg);
+      color: var(--text-dark);
+    }
+    
+    body.dark .text-muted {
+      color: #adb5bd !important;
+    }
+    
+    body.dark .list-group-item {
+      background: var(--card-bg);
+      color: var(--text-dark);
+      border-color: rgba(255,255,255,0.1);
+    }
+
+    body.dark .badge.bg-light {
+      background: #343a40 !important;
+      color: #e9ecef !important;
+    }
+
+    .sidebar {
+      width: 270px;
+      background: var(--sidebar-bg);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 4px 0 20px rgba(0,0,0,0.12);
+      z-index: 100;
+      flex-shrink: 0;
+      height: 100vh;
+    }
+    
+    .sidebar .logo {
+      padding: 1.8rem 1.5rem;
+      font-size: 1.6rem;
+      font-weight: 700;
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .sidebar .logo i {
+      font-size: 1.8rem;
+      color: var(--primary);
+    }
+    
+    .sidebar .nav-link {
+      color: rgba(255,255,255,0.8);
+      padding: 0.8rem 1.5rem;
+      margin: 4px 12px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .sidebar .nav-link i {
+      width: 22px;
+      font-size: 1.2rem;
+    }
+    
+    .sidebar .nav-link:hover, 
+    .sidebar .nav-link.active {
+      background: var(--primary);
+      color: white;
+      transform: translateX(6px);
+    }
+    
+    .main-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.8rem 2rem;
+      background: var(--light-bg);
+    }
+    
+    .card {
+      border: none;
+      border-radius: 1rem;
+      box-shadow: var(--shadow-sm);
+      background: var(--card-bg);
+      transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-3px);
+    }
+    
+    .stat-card {
+      padding: 1.5rem;
+      border-radius: 1.2rem;
+      background: var(--card-bg);
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-hover);
+    }
+    
+    .stat-icon {
+      width: 55px;
+      height: 55px;
+      border-radius: 16px;
+      background: rgba(13,110,253,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      color: var(--primary);
+    }
+    
+    .btn-primary {
+      background: var(--primary);
+      border: none;
+      border-radius: 10px;
+      padding: 0.6rem 1.4rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(13,110,253,0.3);
+    }
+    
+    .table th {
+      font-weight: 600;
+      color: var(--primary);
+    }
+    
+    .form-control, .form-select {
+      border-radius: 10px;
+      border: 1px solid #dee2e6;
+      padding: 0.6rem 0.8rem;
+    }
+    
+    .form-control:focus, .form-select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 0.2rem rgba(13,110,253,0.15);
+    }
+    
+    .modal-content {
+      border-radius: 1.2rem;
+      border: none;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.5s ease;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 80px;
+      }
+      .sidebar .logo span, 
+      .sidebar .nav-link span {
+        display: none;
+      }
+      .sidebar .nav-link {
+        justify-content: center;
+        padding: 0.9rem;
+      }
+      .main-content {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body class="light">
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar" style="display: none;">
+    <div class="logo">
+      <i class="fas fa-car"></i> <span>AutoPro</span>
+    </div>
+    <nav class="nav flex-column mt-3">
+      <a class="nav-link active" data-page="dashboard">
+        <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
+      </a>
+      <a class="nav-link" data-page="customers">
+        <i class="fas fa-users"></i> <span>Customers</span>
+      </a>
+      <a class="nav-link" data-page="booking">
+        <i class="fas fa-calendar-check"></i> <span>New Booking</span>
+      </a>
+      <a class="nav-link" data-page="history">
+        <i class="fas fa-history"></i> <span>History</span>
+      </a>
+      <a class="nav-link" id="logoutLink">
+        <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+      </a>
+    </nav>
+    <div class="mt-auto p-3 text-center">
+      <button id="themeToggle" class="btn btn-sm btn-outline-light w-100 rounded-pill">
+        <i class="fas fa-moon"></i> <span>Dark Mode</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content" id="mainContent"></main>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    // Initialize data storage
+    let customers = JSON.parse(localStorage.getItem('autoPro_customers')) || [];
+    let bookings = JSON.parse(localStorage.getItem('autoPro_bookings')) || [];
+    
+    // Add sample data if empty
+    if (customers.length === 0) {
+      customers = [
+        { id: 'c1', name: 'Rajesh Kumar', mobile: '9876543210', email: 'rajesh@mail.com', vehicleNo: 'MH12AB1234', brand: 'Maruti', model: 'Swift', fuel: 'Petrol', regYear: '2020' },
+        { id: 'c2', name: 'Priya Sharma', mobile: '9123456780', email: 'priya@mail.com', vehicleNo: 'DL4CAF5678', brand: 'Hyundai', model: 'Creta', fuel: 'Diesel', regYear: '2022' }
+      ];
+      localStorage.setItem('autoPro_customers', JSON.stringify(customers));
+    }
+    
+    if (bookings.length === 0) {
+      bookings = [
+        { id: 'b1', customerId: 'c1', serviceType: 'Oil Change', date: '2026-06-20', time: '10:30', technician: 'Anil', status: 'Completed', cost: 3200, gst: 576, discount: 200, total: 3576, vehicleNo: 'MH12AB1234', customerName: 'Rajesh Kumar' },
+        { id: 'b2', customerId: 'c2', serviceType: 'General Service', date: '2026-06-25', time: '14:00', technician: 'Suresh', status: 'Pending', cost: 2500, gst: 450, discount: 0, total: 2950, vehicleNo: 'DL4CAF5678', customerName: 'Priya Sharma' }
+      ];
+      localStorage.setItem('autoPro_bookings', JSON.stringify(bookings));
+    }
+
+    function saveCustomers() { localStorage.setItem('autoPro_customers', JSON.stringify(customers)); }
+    function saveBookings() { localStorage.setItem('autoPro_bookings', JSON.stringify(bookings)); }
+
+    const mainContent = document.getElementById('mainContent');
+    const sidebar = document.getElementById('sidebar');
+    let currentPage = 'dashboard';
+
+    // Navigation function
+    function navigateTo(page) {
+      currentPage = page;
+      
+      // Update active nav link
+      document.querySelectorAll('.sidebar .nav-link[data-page]').forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('data-page') === page) {
+          link.classList.add('active');
+        }
+      });
+      
+      // Render page
+      switch(page) {
+        case 'dashboard':
+          renderDashboard();
+          break;
+        case 'customers':
+          renderCustomers();
+          break;
+        case 'booking':
+          renderBooking();
+          break;
+        case 'history':
+          renderHistory();
+          break;
+      }
+    }
+
+    // Add click handlers to nav links
+    document.querySelectorAll('.sidebar .nav-link[data-page]').forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        navigateTo(this.getAttribute('data-page'));
+      });
+    });
+
+    // Login page
+    function showLogin() {
+      sidebar.style.display = 'none';
+      mainContent.innerHTML = `
+        <div class="container d-flex align-items-center justify-content-center min-vh-100">
+          <div class="col-md-5 col-lg-4">
+            <div class="card p-4 shadow-lg fade-in" style="border-radius:1.5rem;">
+              <div class="text-center mb-4">
+                <i class="fas fa-car fa-3x text-primary"></i>
+                <h3 class="mt-2 fw-bold">AutoPro Login</h3>
+                <p class="text-muted">Vehicle Service Management</p>
+              </div>
+               <form id="loginForm">
+                <div class="mb-3">
+                  <label class="form-label">Username</label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                    <input type="text" class="form-control" id="username" placeholder="Enter username" required>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Password</label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                    <input type="password" class="form-control" id="password" placeholder="Enter password" required>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 py-2 rounded-pill">
+                  <i class="fas fa-sign-in-alt me-2"></i>Login
+                </button>
+              </form>
+              <p class="text-muted text-center mt-3 small">
+                <i class="fas fa-info-circle"></i> Demo: kirtan  /Shreejii@2129
+              </p>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const user = document.getElementById('username').value.trim();
+        const pass = document.getElementById('password').value.trim();
+        
+        if (user === 'kirtan' && pass === 'Shreejii@2129') {
+          sessionStorage.setItem('autoPro_loggedIn', 'true');
+          sidebar.style.display = 'flex';
+          navigateTo('dashboard');
+        } else {
+          alert('❌ Invalid credentials! Please use admin / admin123');
+        }
+      });
+    }
+
+    // Logout
+    document.getElementById('logoutLink').addEventListener('click', function(e) {
+      e.preventDefault();
+      if(confirm('Are you sure you want to logout?')) {
+        sessionStorage.removeItem('autoPro_loggedIn');
+        showLogin();
+      }
+    });
+
+    // Theme toggle
+    document.getElementById('themeToggle').addEventListener('click', function() {
+      document.body.classList.toggle('dark');
+      const icon = this.querySelector('i');
+      const text = this.querySelector('span');
+      
+      if(document.body.classList.contains('dark')) {
+        icon.className = 'fas fa-sun';
+        text.textContent = ' Light Mode';
+      } else {
+        icon.className = 'fas fa-moon';
+        text.textContent = ' Dark Mode';
+      }
+    });
+
+    // Dashboard
+    function renderDashboard() {
+      const totalCust = customers.length;
+      const today = new Date().toISOString().split('T')[0];
+      const todayBookings = bookings.filter(b => b.date === today).length;
+      const totalRevenue = bookings.reduce((sum, b) => sum + (b.total || 0), 0);
+      
+      mainContent.innerHTML = `
+        <div class="fade-in">
+          <h2 class="mb-4 fw-bold">
+            <i class="fas fa-tachometer-alt me-2 text-primary"></i>Dashboard Overview
+          </h2>
+          
+          <div class="row g-4 mb-4">
+            <div class="col-md-6 col-lg-3">
+              <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div>
+                  <h3 class="fw-bold mb-0">${totalCust}</h3>
+                  <p class="text-muted mb-0">Total Customers</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+              <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-car"></i></div>
+                <div>
+                  <h3 class="fw-bold mb-0">${totalCust}</h3>
+                  <p class="text-muted mb-0">Total Vehicles</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+              <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+                <div>
+                  <h3 class="fw-bold mb-0">${todayBookings}</h3>
+                  <p class="text-muted mb-0">Today's Bookings</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+              <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-rupee-sign"></i></div>
+                <div>
+                  <h3 class="fw-bold mb-0">₹${totalRevenue.toLocaleString()}</h3>
+                  <p class="text-muted mb-0">Total Revenue</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="row g-4">
+            <div class="col-lg-8">
+              <div class="card p-4">
+                <h5 class="mb-3 fw-bold">
+                  <i class="fas fa-chart-bar me-2 text-primary"></i>Monthly Revenue Overview
+                </h5>
+                <canvas id="revenueChart" height="180"></canvas>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="card p-4">
+                <h5 class="mb-3 fw-bold">
+                  <i class="fas fa-clock me-2 text-primary"></i>Recent Bookings
+                </h5>
+                <ul class="list-group list-group-flush">
+                  ${bookings.slice(-5).reverse().map(b => `
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                      <div>
+                        <small class="text-muted">${b.date}</small><br>
+                        <strong>${b.vehicleNo}</strong>
+                      </div>
+                      <span class="badge bg-${b.status === 'Completed' ? 'success' : b.status === 'Pending' ? 'warning' : 'info'} rounded-pill">
+                        ${b.status}
+                      </span>
+                    </li>
+                  `).join('')}
+                  ${bookings.length === 0 ? '<li class="list-group-item text-center text-muted">No bookings yet</li>' : ''}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      // Initialize chart
+      setTimeout(() => {
+        const ctx = document.getElementById('revenueChart');
+        if(ctx) {
+          const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+          const revenueData = Array(12).fill(0);
+          
+          bookings.forEach(b => {
+            const m = new Date(b.date).getMonth();
+            if(!isNaN(m)) {
+              revenueData[m] += b.total || 0;
+            }
+          });
+          
+          new Chart(ctx, {
+            type: 'bar',
+            data: { 
+              labels: months, 
+              datasets: [{
+                label: 'Revenue (₹)', 
+                data: revenueData, 
+                backgroundColor: '#0d6efd',
+                borderRadius: 8,
+              }] 
+            },
+            options: { 
+              responsive: true,
+              plugins: { legend: { display: false } }
+            }
+          });
+        }
+      }, 100);
+    }
+
+    // Customers page
+    function renderCustomers() {
+      mainContent.innerHTML = `
+        <div class="fade-in">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold mb-0">
+              <i class="fas fa-users me-2 text-primary"></i>Customer Management
+            </h2>
+            <button class="btn btn-primary" onclick="openCustomerModal()">
+              <i class="fas fa-plus me-2"></i>Add Customer
+            </button>
+          </div>
+          
+          <div class="card p-3 mb-3">
+            <div class="input-group">
+              <span class="input-group-text"><i class="fas fa-search"></i></span>
+              <input type="text" id="customerSearch" class="form-control" placeholder="Search by name, mobile or vehicle...">
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="table-responsive">
+              <table class="table table-hover align-middle">
+                <thead>
+                  <tr>
+                    <th>Customer Name</th>
+                    <th>Mobile</th>
+                    <th>Vehicle No</th>
+                    <th>Brand</th>
+                    <th>Model</th>
+                    <th>Fuel</th>
+                    <th>Year</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="customerTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+    <!-- Customer Modal -->
+          <div class="modal fade" id="customerModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                  <h5 class="modal-title" id="modalTitle">
+                    <i class="fas fa-user-plus me-2"></i>Add New Customer
+                  </h5>
+                  <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                  <form id="customerForm">
+                    <input type="hidden" id="custId">
+                    <div class="row g-3">
+                      <div class="col-md-6">
+                        <label class="form-label">Customer Name *</label>
+                        <input class="form-control" id="custName" placeholder="Full name" required>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label">Mobile Number *</label>
+                        <input class="form-control" id="custMobile" placeholder="10-digit mobile" required>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" id="custEmail" placeholder="email@example.com">
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label">Vehicle Number *</label>
+                        <input class="form-control" id="vehicleNo" placeholder="e.g., MH12AB1234" required>
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label">Brand</label>
+                        <input class="form-control" id="brand" placeholder="e.g., Maruti">
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label">Model</label>
+                        <input class="form-control" id="model" placeholder="e.g., Swift">
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label">Fuel Type</label>
+                        <select class="form-select" id="fuel">
+                          <option>Petrol</option>
+                          <option>Diesel</option>
+                          <option>CNG</option>
+                          <option>Electric</option>
+                        </select>
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label">Registration Year</label>
+                        <input class="form-control" id="regYear" placeholder="e.g., 2022">
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                <div class="modal-footer">
+                  <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                  <button class="btn btn-primary" onclick="saveCustomer()">
+                    <i class="fas fa-save me-2"></i>Save Customer
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      displayCustomers();
+      document.getElementById('customerSearch').addEventListener('input', displayCustomers);
+    }
+
+    function displayCustomers() {
+      const searchTerm = document.getElementById('customerSearch')?.value.toLowerCase() || '';
+      const filtered = customers.filter(c => 
+        c.name.toLowerCase().includes(searchTerm) || 
+        c.mobile.includes(searchTerm) ||
+        c.vehicleNo.toLowerCase().includes(searchTerm)
+      );
+      
+      const tbody = document.getElementById('customerTableBody');
+      if(tbody) {
+        tbody.innerHTML = filtered.length > 0 ? filtered.map(c => `
+          <tr>
+            <td><strong>${c.name}</strong></td>
+            <td>${c.mobile}</td>
+            <td><span class="badge bg-light text-dark">${c.vehicleNo}</span></td>
+            <td>${c.brand || '-'}</td>
+            <td>${c.model || '-'}</td>
+            <td>${c.fuel || '-'}</td>
+            <td>${c.regYear || '-'}</td>
+            <td>
+              <button class="btn btn-sm btn-outline-warning me-1" onclick="editCustomer('${c.id}')">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-danger" onclick="deleteCustomer('${c.id}')">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        `).join('') : '<tr><td colspan="8" class="text-center text-muted py-4">No customers found</td></tr>';
+      }
+    }
+
+    window.openCustomerModal = function() {
+      document.getElementById('custId').value = '';
+      document.getElementById('customerForm').reset();
+      document.getElementById('modalTitle').innerHTML = '<i class="fas fa-user-plus me-2"></i>Add New Customer';
+      new bootstrap.Modal(document.getElementById('customerModal')).show();
+    };
+
+    window.editCustomer = function(id) {
+      const c = customers.find(cu => cu.id === id);
+      if(!c) return;
+      
+      document.getElementById('custId').value = c.id;
+      document.getElementById('custName').value = c.name;
+      document.getElementById('custMobile').value = c.mobile;
+      document.getElementById('custEmail').value = c.email || '';
+      document.getElementById('vehicleNo').value = c.vehicleNo;
+      document.getElementById('brand').value = c.brand || '';
+      document.getElementById('model').value = c.model || '';
+      document.getElementById('fuel').value = c.fuel || 'Petrol';
+      document.getElementById('regYear').value = c.regYear || '';
+      
+      document.getElementById('modalTitle').innerHTML = '<i class="fas fa-user-edit me-2"></i>Edit Customer';
+      new bootstrap.Modal(document.getElementById('customerModal')).show();
+    };
+
+    window.deleteCustomer = function(id) {
+      const customer = customers.find(c => c.id === id);
+      if(customer && confirm(`Are you sure you want to delete ${customer.name}?`)) { 
+        customers = customers.filter(c => c.id !== id); 
+        saveCustomers(); 
+        displayCustomers();
+      }
+    };
+
+    window.saveCustomer = function() {
+      const id = document.getElementById('custId').value || 'c' + Date.now();
+      const name = document.getElementById('custName').value.trim();
+      const mobile = document.getElementById('custMobile').value.trim();
+      const vehicleNo = document.getElementById('vehicleNo').value.trim();
+      
+      if (!name || !mobile || !vehicleNo) {
+        alert('Please fill in all required fields (Name, Mobile, Vehicle No)');
+        return;
+      }
+      
+      if (mobile.length < 10) {
+        alert('Please enter a valid 10-digit mobile number');
+        return;
+      }
+      
+      const cust = {
+        id,
+        name,
+        mobile,
+        email: document.getElementById('custEmail').value.trim(),
+        vehicleNo,
+        brand: document.getElementById('brand').value.trim(),
+        model: document.getElementById('model').value.trim(),
+        fuel: document.getElementById('fuel').value,
+        regYear: document.getElementById('regYear').value.trim()
+      };
+      
+      const idx = customers.findIndex(c => c.id === id);
+      if(idx >= 0) {
+        customers[idx] = cust;
+      } else {
+        customers.push(cust);
+      }
+      
+      saveCustomers(); 
+      displayCustomers();
+      bootstrap.Modal.getInstance(document.getElementById('customerModal')).hide();
+    };
+
+    // Booking page
+    function renderBooking() {
+      mainContent.innerHTML = `
+        <div class="fade-in">
+          <h2 class="fw-bold mb-4">
+            <i class="fas fa-calendar-plus me-2 text-primary"></i>New Service Booking
+          </h2>
+          
+          <div class="card p-4">
+            <form id="bookingForm">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label fw-bold">Select Customer</label>
+                  <select id="bookCustomer" class="form-select" required>
+                    <option value="">-- Choose Customer --</option>
+                    ${customers.map(c => `<option value="${c.id}">${c.name} - ${c.vehicleNo}</option>`).join('')}
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-bold">Service Type</label>
+                  <select id="serviceType" class="form-select">
+                    <option>General Service</option>
+                    <option>Oil Change</option>
+                    <option>Brake Service</option>
+                    <option>Engine Repair</option>
+                    <option>Washing</option>
+                    <option>Battery Replacement</option>
+                    <option>AC Service</option>
+                    <option>Wheel Alignment</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label fw-bold">Booking Date</label>
+                  <input type="date" id="bookDate" class="form-control" required>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label fw-bold">Booking Time</label>
+                  <input type="time" id="bookTime" class="form-control" required>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label fw-bold">Technician</label>
+                  <select id="technician" class="form-select">
+                    <option>Anil Kumar</option>
+                    <option>Suresh Patel</option>
+                    <option>Ramesh Singh</option>
+                    <option>Deepak Sharma</option>
+                  </select>
+                </div>
+              </div>
+              
+              <hr class="my-4">
+              <h5 class="mb-3 fw-bold"><i class="fas fa-calculator me-2 text-primary"></i>Cost Estimation</h5>
+              
+              <div class="row g-3">
+                <div class="col-md-3">
+                  <label class="form-label">Base Cost (₹)</label>
+                  <input type="number" id="baseCost" class="form-control" value="2000" min="0">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Discount (₹)</label>
+                  <input type="number" id="discount" class="form-control" value="0" min="0">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">GST (18%)</label>
+                  <input type="text" id="gstDisplay" class="form-control" readonly>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Total Amount (₹)</label>
+                  <input type="text" id="totalDisplay" class="form-control fw-bold text-primary" readonly>
+                </div>
+              </div>
+              
+              <div class="mt-4">
+                <button type="submit" class="btn btn-primary btn-lg">
+                  <i class="fas fa-check-circle me-2"></i>Confirm Booking
+                </button>
+                <button type="button" class="btn btn-outline-secondary btn-lg ms-2" onclick="navigateTo('dashboard')">
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('bookDate').value = new Date().toISOString().split('T')[0];
+      
+      const calcTotal = () => {
+        const base = parseFloat(document.getElementById('baseCost').value) || 0;
+        const disc = parseFloat(document.getElementById('discount').value) || 0;
+        const taxable = base - disc;
+        const gst = taxable * 0.18;
+        const total = taxable + gst;
+        
+        document.getElementById('gstDisplay').value = gst.toFixed(2);
+        document.getElementById('totalDisplay').value = total.toFixed(2);
+      };
+      
+      document.getElementById('baseCost').addEventListener('input', calcTotal);
+      document.getElementById('discount').addEventListener('input', calcTotal);
+      calcTotal();
+      
+      document.getElementById('bookingForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const custId = document.getElementById('bookCustomer').value;
+        if (!custId) {
+          alert('Please select a customer');
+          return;
+        }
+        
+        const customer = customers.find(c => c.id === custId);
+        if (!customer) return;
+        
+        const booking = {
+          id: 'b' + Date.now(),
+          customerId: custId,
+          serviceType: document.getElementById('serviceType').value,
+          date: document.getElementById('bookDate').value,
+          time: document.getElementById('bookTime').value,
+          technician: document.getElementById('technician').value,
+          status: 'Pending',
+          cost: parseFloat(document.getElementById('baseCost').value) || 0,
+          gst: parseFloat(document.getElementById('gstDisplay').value) || 0,
+          discount: parseFloat(document.getElementById('discount').value) || 0,
+          total: parseFloat(document.getElementById('totalDisplay').value) || 0,
+          vehicleNo: customer.vehicleNo,
+          customerName: customer.name
+        };
+        
+        bookings.push(booking);
+        saveBookings();
+        alert('✅ Service booked successfully!');
+        navigateTo('history');
+      });
+    }
+
+    // History page
+    function renderHistory() {
+      mainContent.innerHTML = `
+        <div class="fade-in">
+          <h2 class="fw-bold mb-4">
+            <i class="fas fa-history me-2 text-primary"></i>Service History
+          </h2>
+          
+          <div class="card p-3 mb-3">
+            <div class="input-group">
+              <span class="input-group-text"><i class="fas fa-search"></i></span>
+              <input type="text" id="historySearch" class="form-control" placeholder="Search by vehicle number or customer name...">
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="table-responsive">
+              <table class="table table-hover align-middle">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Customer</th>
+                    <th>Vehicle No</th>
+                    <th>Service Type</th>
+                    <th>Technician</th>
+                    <th>Total Cost</th>
+                    <th>Status</th>
+                    <th>Invoice</th>
+                  </tr>
+                </thead>
+                <tbody id="historyBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      const displayHistory = () => {
+        const search = document.getElementById('historySearch').value.toLowerCase();
+        const filtered = bookings.filter(b => 
+          b.vehicleNo?.toLowerCase().includes(search) || 
+          b.customerName?.toLowerCase().includes(search)
+        ).reverse();
+        
+        const tbody = document.getElementById('historyBody');
+        if (tbody) {
+          tbody.innerHTML = filtered.length > 0 ? filtered.map(b => `
+            <tr>
+              <td>${b.date}</td>
+              <td><strong>${b.customerName}</strong></td>
+              <td><span class="badge bg-light text-dark">${b.vehicleNo}</span></td>
+              <td>${b.serviceType}</td>
+              <td>${b.technician}</td>
+              <td><strong class="text-primary">₹${b.total?.toLocaleString()}</strong></td>
+              <td>
+                <span class="badge bg-${b.status === 'Completed' ? 'success' : b.status === 'Pending' ? 'warning' : 'info'} rounded-pill">
+                  ${b.status}
+                </span>
+              </td>
+              <td>
+                <button class="btn btn-sm btn-outline-primary" onclick="printInvoice('${b.id}')">
+                  <i class="fas fa-print"></i>
+                </button>
+              </td>
+            </tr>
+          `).join('') : '<tr><td colspan="8" class="text-center text-muted py-4">No service history found</td></tr>';
+        }
+      };
+      
+      document.getElementById('historySearch').addEventListener('input', displayHistory);
+      displayHistory();
+    }
+
+    window.printInvoice = function(id) {
+      const b = bookings.find(bk => bk.id === id);
+      if(!b) return;
+      
+      const invoiceWindow = window.open('', '_blank', 'width=700,height=600');
+      invoiceWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Invoice - ${b.id}</title>
+          <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+          <style>
+            body { padding: 30px; font-family: Arial, sans-serif; }
+            .invoice-header { border-bottom: 2px solid #0d6efd; padding-bottom: 15px; margin-bottom: 20px; }
+            .invoice-title { color: #0d6efd; }
+            @media print { body { padding: 20px; } button { display: none; } }
+          </style>
+        </head>
+        <body>
+          <div class="invoice-header">
+            <h2 class="invoice-title"><i class="fas fa-car"></i> AutoPro Service Center</h2>
+            <p class="text-muted">Official Service Invoice</p>
+          </div>
+          
+          <div class="row mb-4">
+            <div class="col-6">
+              <h5>Customer Details:</h5>
+              <p><strong>Name:</strong> ${b.customerName}</p>
+              <p><strong>Vehicle No:</strong> ${b.vehicleNo}</p>
+            </div>
+            <div class="col-6 text-end">
+              <h5>Booking Details:</h5>
+              <p><strong>Date:</strong> ${b.date} at ${b.time}</p>
+              <p><strong>Technician:</strong> ${b.technician}</p>
+            </div>
+          </div>
+          
+          <table class="table table-bordered">
+            <thead class="table-light">
+              <tr>
+                <th>Service</th>
+                <th>Cost</th>
+                <th>Discount</th>
+                <th>GST (18%)</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>${b.serviceType}</td>
+                <td>₹${b.cost}</td>
+                <td>₹${b.discount}</td>
+                <td>₹${b.gst}</td>
+                <td><strong>₹${b.total}</strong></td>
+              </tr>
+            </tbody>
+          </table>
+          
+          <div class="text-end mt-4">
+            <h4>Total Amount: <span class="text-primary">₹${b.total}</span></h4>
+            <p class="text-muted">Status: <span class="badge bg-${b.status === 'Completed' ? 'success' : 'warning'}">${b.status}</span></p>
+          </div>
+          
+          <button onclick="window.print()" class="btn btn-primary mt-3">
+            <i class="fas fa-print"></i> Print Invoice
+          </button>
+        </body>
+        </html>
+      `);
+      invoiceWindow.document.close();
+    };
+
+    // Initialize app
+    function init() {
+      const loggedIn = sessionStorage.getItem('autoPro_loggedIn');
+      if (loggedIn === 'true') {
+        sidebar.style.display = 'flex';
+        navigateTo('dashboard');
+      } else {
+        showLogin();
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
